@@ -4,20 +4,21 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MiniMartTest.Models;
-
+using System.IO;
 
 namespace MiniMartTest.Controllers
 {
     public class HomeController : Controller
     {
         List<User> userList = new List<Models.User>();
+
         public ActionResult Index()
         {
-             using(var db = new MiniMartDBContentEntities())
+            using (var db = new MiniMartDBContentEntities())
             {
                 var users = db.Users;
-               
-                foreach(User user in users)
+
+                foreach (User user in users)
                 {
                     userList.Add(user);
                 }
@@ -37,6 +38,20 @@ namespace MiniMartTest.Controllers
         public ActionResult Contact()
         {
             ViewBag.Message = "Your contact page.";
+
+            return View();
+        }
+
+        public ActionResult Post()
+        {
+            ViewBag.Message = "Your Post page.";
+
+            return View();
+        }
+
+        public ActionResult Saved()
+        {
+            ViewBag.Message = "Your Saved Items page.";
 
             return View();
         }

@@ -1,0 +1,101 @@
+﻿@model MiniMartTest.Models.PostViewModel
+
+@{
+    ViewBag.Title = "Mini Mart";
+}
+
+@{  WebImage photo = null;
+    var newFileName = "";
+    var imagePath = "";
+
+    if (IsPost)
+    {
+        photo = WebImage.GetImageFromRequest();
+        if (photo != null)
+        {
+            newFileName = Guid.NewGuid().ToString() + "_" +
+                Path.GetFileName(photo.FileName);
+            imagePath = @"\Content\Images\" + newFileName;
+
+            photo.Save(@"~\" + imagePath);
+        }
+    }
+}
+
+<h1 id="main-title">@ViewBag.Title</h1>
+<hr />
+
+@*Create Post form*@
+@using (Html.BeginForm("Post", "Home", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+{
+    //Profile navigation
+    <div class="row">
+        <div class="col-md-2">
+            <table>
+                <tr>
+                    <td>
+                        <img id="avatar-logo" src="@Url.Content("~/Content/Images/avatar.png")" />
+                        <h2>Name</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>@Html.ActionLink("Home", "Index", "Home")</p>
+                        <p>@Html.ActionLink("About", "About", "Home")</p>
+                        <p>@Html.ActionLink("Contact", "Contact", "Home")</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col-md-6">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.TextBoxFor(m => m.ItemName, new { @class = "form-control form-input", placeholder = Html.DisplayNameFor(m => m.ItemName) })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.SelectedConditionId)
+                @Html.DropDownListFor(n => n.SelectedConditionId, new SelectList(PostViewModel.ConditionsList, "Id", "Name"), new { @class = "form-control form-input" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.ItemDiscription, new { @id = "post-despriction" })
+                @Html.TextArea("Write a short description...", new { rows = 10, columns = 60, @class = "form-control form-input" })
+            </div>
+        </div>
+
+        @*Upload image*@
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Image">Image</label>
+                <input type="file" name="Image" />
+                <br />
+                <input type="submit" value="Upload" />
+
+                @if (imagePath != "")
+                {
+                    <div class="result">
+                        <img src="@imagePath" alt="image" height=200 width=200 />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12 post-submit">
+                    <input type="submit" value="Post" class="btn btn-default post-button-spacing" />
+                    <input type="reset" value="Clear" class="btn btn-default" />
+                </div>
+            </div>
+        </div>
+}
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}*@
+
