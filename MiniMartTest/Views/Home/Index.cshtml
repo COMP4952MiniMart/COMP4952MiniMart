@@ -1,36 +1,109 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+    ViewBag.Title = "Mini Mart";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+@*Main content View*@
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    <h1 id="main-title">@ViewBag.Title</h1>
+    <hr />
+    <input type="button" value="Create a new Post" id="post-button" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Post", "Home") + "'");" />
+</div>
+
+@*Profile navigation*@
+<div class="row">
+    <div class="col-md-2">
+        <table>
+            <tr>
+                <td>
+                    <img id="avatar-logo" src="@Url.Content("~/Content/Images/avatar.png")" />
+                    <h2>Name</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>@Html.ActionLink("Home", "Index", "Home")</p>
+                    <p>@Html.ActionLink("About", "About", "Home")</p>
+                    <p>@Html.ActionLink("Contact", "Contact", "Home")</p>
+                </td>
+            </tr>
+        </table>
     </div>
 
-    @{ 
+    @*Postings*@
+    <div class="col-md-7 main-content">
+        <table>
+            <tr>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+                <td>
+                    <a href=""><p class="imageBox">image goes here</p></a>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    @*Item description panel*@
+    <div class="col-md-3 info-content">
+        <h3>Item name</h3>
+        <p class="imageInfoBox">image goes here</p>
+        <p class="content-padding">Item description here</p>
+        <p class="content-padding">Condition: New / Used</p>
+
+        <div class="button-group">
+            <button class="btn btn-default">Save Item</button>
+            <input type="button" value="View Item Page" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Saved", "Home") + "'");" />
+        </div>     
+    </div>
+
+    @*@{
         var users = (List<MiniMartTest.Models.User>)ViewData["UserList"];
 
     }
-    @foreach(MiniMartTest.Models.User user in users) 
-    {
+    @foreach (MiniMartTest.Models.User user in users)
+            {
         <p3>@user.Id</p3> <br />
-        <p3>@user.fName</p3><br />
-        <p3>@user.lName</p3><br />
-        <p3>@user.phoneNumber</p3><br />
-        <p3>@user.email</p3>
-    }
-    
+                <p3>@user.fName</p3><br />
+                <p3>@user.lName</p3><br />
+                <p3>@user.phoneNumber</p3><br />
+                <p3>@user.email</p3>
+    }*@
 </div>
 

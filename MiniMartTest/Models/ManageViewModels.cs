@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using System.Linq;
 
 namespace MiniMartTest.Models
 {
@@ -82,5 +83,41 @@ namespace MiniMartTest.Models
     {
         public string SelectedProvider { get; set; }
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+    }
+
+    public class Conditions
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class PostViewModel
+    {
+        public static IEnumerable<Conditions> ConditionsList = new List<Conditions> {
+            new Conditions {
+                Id = 1,
+                Name = "New"
+            },
+            new Conditions {
+                Id = 2,
+                Name = "Used"
+            }
+        };
+
+        [Required]
+        [StringLength(100)]
+        [Display(Name = "Item Name")]
+        public string ItemName { get; set; }
+
+        [Required]
+        [Display(Name = "Condition")]
+        public int SelectedConditionId { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        [Display(Name = "Item Description")]
+        public string ItemDiscription { get; set; }
+
+        public string ImagePath { get; set; }
     }
 }
