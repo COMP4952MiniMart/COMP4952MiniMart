@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="MiniMartDBContentModelStoreContainer" CdmEntityContainer="MiniMartDBContentEntities">
+    <EntitySetMapping Name="Images">
+      <EntityTypeMapping TypeName="MiniMartDBContentModel.Image">
+        <MappingFragment StoreEntitySet="Image">
+          <ScalarProperty Name="imageUrl" ColumnName="imageUrl" />
+          <ScalarProperty Name="postId" ColumnName="postId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Posts">
+      <EntityTypeMapping TypeName="MiniMartDBContentModel.Post">
+        <MappingFragment StoreEntitySet="Post">
+          <ScalarProperty Name="commentId" ColumnName="commentId" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="imageId" ColumnName="imageId" />
+          <ScalarProperty Name="condition" ColumnName="condition" />
+          <ScalarProperty Name="description" ColumnName="description" />
+          <ScalarProperty Name="userId" ColumnName="userId" />
+          <ScalarProperty Name="postId" ColumnName="postId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Users">
+      <EntityTypeMapping TypeName="MiniMartDBContentModel.User">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="postId" ColumnName="postId" />
+          <ScalarProperty Name="password" ColumnName="password" />
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="phoneNumber" ColumnName="phoneNumber" />
+          <ScalarProperty Name="lName" ColumnName="lName" />
+          <ScalarProperty Name="fName" ColumnName="fName" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
