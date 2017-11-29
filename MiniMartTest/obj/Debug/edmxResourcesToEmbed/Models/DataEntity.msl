@@ -4,7 +4,7 @@
     <EntitySetMapping Name="Images">
       <EntityTypeMapping TypeName="MiniMartDBContentModel.Image">
         <MappingFragment StoreEntitySet="Image">
-          <ScalarProperty Name="imageUrl" ColumnName="imageUrl" />
+          <ScalarProperty Name="imageBinary" ColumnName="imageBinary" />
           <ScalarProperty Name="postId" ColumnName="postId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>

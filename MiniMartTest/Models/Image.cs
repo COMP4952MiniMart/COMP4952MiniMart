@@ -16,7 +16,7 @@ namespace MiniMartTest.Models
     {
         public int Id { get; set; }
         public Nullable<int> postId { get; set; }
-        public string imageUrl { get; set; }
+        public byte[] imageBinary { get; set; }
     
         public virtual Post Post { get; set; }
     }

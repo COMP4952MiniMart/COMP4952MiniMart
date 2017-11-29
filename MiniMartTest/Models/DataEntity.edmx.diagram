@@ -8,7 +8,7 @@
         <EntityTypeShape EntityType="MiniMartDBContentModel.Image" Width="1.5" PointX="3" PointY="1.125" />
         <EntityTypeShape EntityType="MiniMartDBContentModel.Post" Width="1.5" PointX="0.75" PointY="2.25" />
         <EntityTypeShape EntityType="MiniMartDBContentModel.User" Width="1.5" PointX="3" PointY="3.625" />
-        <AssociationConnector Association="MiniMartDBContentModel.FK__Image__postId__70DDC3D8" />
+        <AssociationConnector Association="MiniMartDBContentModel.FK__Image__postId__02FC7413" />
         <AssociationConnector Association="MiniMartDBContentModel.FK__Post__userId__71D1E811" />
         <AssociationConnector Association="MiniMartDBContentModel.FK__User__postId__6FE99F9F" />
       </Diagram>
