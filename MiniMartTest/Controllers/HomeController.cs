@@ -8,9 +8,11 @@ using System.IO;
 
 namespace MiniMartTest.Controllers
 {
+
+  
     public class HomeController : Controller
     {
-        List<User> userList = new List<Models.User>();
+        List<Models.User> userList = new List<Models.User>();
 
         public ActionResult Index()
         {
