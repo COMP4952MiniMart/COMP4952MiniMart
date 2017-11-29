@@ -11,7 +11,7 @@
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="postId" Type="int" />
-          <Property Name="imageUrl" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="imageBinary" Type="varbinary(max)" Nullable="false" />
         </EntityType>
         <EntityType Name="Post">
           <Key>
@@ -37,7 +37,7 @@
           <Property Name="password" Type="nvarchar(max)" Nullable="false" />
           <Property Name="postId" Type="int" />
         </EntityType>
-        <Association Name="FK__Image__postId__70DDC3D8">
+        <Association Name="FK__Image__postId__02FC7413">
           <End Role="Post" Type="Self.Post" Multiplicity="0..1" />
           <End Role="Image" Type="Self.Image" Multiplicity="*" />
           <ReferentialConstraint>
@@ -77,7 +77,7 @@
           <EntitySet Name="Image" EntityType="Self.Image" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Post" EntityType="Self.Post" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <AssociationSet Name="FK__Image__postId__70DDC3D8" Association="Self.FK__Image__postId__70DDC3D8">
+          <AssociationSet Name="FK__Image__postId__02FC7413" Association="Self.FK__Image__postId__02FC7413">
             <End Role="Post" EntitySet="Post" />
             <End Role="Image" EntitySet="Image" />
           </AssociationSet>
@@ -98,7 +98,7 @@
           <EntitySet Name="Images" EntityType="MiniMartDBContentModel.Image" />
           <EntitySet Name="Posts" EntityType="MiniMartDBContentModel.Post" />
           <EntitySet Name="Users" EntityType="MiniMartDBContentModel.User" />
-          <AssociationSet Name="FK__Image__postId__70DDC3D8" Association="MiniMartDBContentModel.FK__Image__postId__70DDC3D8">
+          <AssociationSet Name="FK__Image__postId__02FC7413" Association="MiniMartDBContentModel.FK__Image__postId__02FC7413">
             <End Role="Post" EntitySet="Posts" />
             <End Role="Image" EntitySet="Images" />
           </AssociationSet>
@@ -117,8 +117,8 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="postId" Type="Int32" />
-          <Property Name="imageUrl" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Post" Relationship="MiniMartDBContentModel.FK__Image__postId__70DDC3D8" FromRole="Image" ToRole="Post" />
+          <Property Name="imageBinary" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <NavigationProperty Name="Post" Relationship="MiniMartDBContentModel.FK__Image__postId__02FC7413" FromRole="Image" ToRole="Post" />
         </EntityType>
         <EntityType Name="Post">
           <Key>
@@ -131,7 +131,7 @@
           <Property Name="imageId" Type="Int32" />
           <Property Name="name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="commentId" Type="Int32" />
-          <NavigationProperty Name="Images" Relationship="MiniMartDBContentModel.FK__Image__postId__70DDC3D8" FromRole="Post" ToRole="Image" />
+          <NavigationProperty Name="Images" Relationship="MiniMartDBContentModel.FK__Image__postId__02FC7413" FromRole="Post" ToRole="Image" />
           <NavigationProperty Name="User" Relationship="MiniMartDBContentModel.FK__Post__userId__71D1E811" FromRole="Post" ToRole="User" />
           <NavigationProperty Name="Users" Relationship="MiniMartDBContentModel.FK__User__postId__6FE99F9F" FromRole="Post" ToRole="User" />
         </EntityType>
@@ -149,7 +149,7 @@
           <NavigationProperty Name="Posts" Relationship="MiniMartDBContentModel.FK__Post__userId__71D1E811" FromRole="User" ToRole="Post" />
           <NavigationProperty Name="Post" Relationship="MiniMartDBContentModel.FK__User__postId__6FE99F9F" FromRole="User" ToRole="Post" />
         </EntityType>
-        <Association Name="FK__Image__postId__70DDC3D8">
+        <Association Name="FK__Image__postId__02FC7413">
           <End Type="MiniMartDBContentModel.Post" Role="Post" Multiplicity="0..1" />
           <End Type="MiniMartDBContentModel.Image" Role="Image" Multiplicity="*" />
           <ReferentialConstraint>
@@ -185,7 +185,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -194,7 +194,7 @@
           <EntitySetMapping Name="Images">
             <EntityTypeMapping TypeName="MiniMartDBContentModel.Image">
               <MappingFragment StoreEntitySet="Image">
-                <ScalarProperty Name="imageUrl" ColumnName="imageUrl" />
+                <ScalarProperty Name="imageBinary" ColumnName="imageBinary" />
                 <ScalarProperty Name="postId" ColumnName="postId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

@@ -9,6 +9,9 @@ namespace MiniMartTest.Controllers
 {
     public class PostController : Controller
     {
+        // store images before a post is stored in DB
+        private List<Image> postImages = new List<Image>();
+
         // GET: Post
         public ActionResult Index()
         {
@@ -26,11 +29,15 @@ namespace MiniMartTest.Controllers
         [HttpPost]
         public ActionResult Post(PostViewModel model)
         {
+          
             using (var db = new MiniMartDBContentEntities())
             {
-                string name = model.ItemName;
+                int postId = db.Posts.Count();
                 Post post = new Post();
                 post.name = model.ItemName;
+                post.userId = 0;
+                post.User = db.Users.First(m => m.Id == 0);
+                post.Users.Add(post.User);
                 if (model.SelectedConditionId == 0)
                 {
                     post.condition = "new";
@@ -40,23 +47,74 @@ namespace MiniMartTest.Controllers
                     post.condition = "used";
                 }
                 post.description = model.ItemDiscription;
+                post.postId = postId;
 
-
+                //add a new post 
                 db.Posts.Add(post);
                 db.SaveChanges();
+
+                var images = Session["postImages"] as List<Image>;
+             
+                //add a new image
+                foreach(Image i in images)
+                {
+                    i.Id = db.Images.Count();
+                    i.postId = postId;
+                    db.Images.Add(i);
+                    db.SaveChanges();
+                }
             }
+
+
 
             return RedirectToAction("Index", "Home");
         }
 
-        [HttpPost]
-        public ActionResult addImage(Image image)
+        public ActionResult UploadFile()
         {
+            bool isSavedSuccessfully = true;
+            string fname = "";
+           
+            try
+            {
+                foreach (string filename in Request.Files)
+                {
+                    HttpPostedFileBase image = Request.Files[filename];
+                    Image i = new Image();
+                    i.imageBinary = new byte[image.ContentLength];
+                    image.InputStream.Read(i.imageBinary, 0, image.ContentLength);
 
+                    var postImages = Session["postImages"] as List<Image>;
+                    if(postImages == null)
+                    {
+                        postImages = new List<Image>();
+                    }
 
-            return View();
+                    postImages.Add(i);
+                    Session["postImages"] =postImages;
+                }
+
+                //Session["postImages"] = postImages;
+            }
+            catch (Exception)
+            {
+                isSavedSuccessfully = false;
+            }
+            
+               
+            if(isSavedSuccessfully)
+            {
+                return Json(new { Message = fname });
+            }
+            else
+            {
+                return Json(new { Message = "error" });
+            }
         }
+
     }
+
+    
 
 }
 

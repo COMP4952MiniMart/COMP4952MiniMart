@@ -6,7 +6,7 @@
     </Key>
     <Property Name="Id" Type="int" Nullable="false" />
     <Property Name="postId" Type="int" />
-    <Property Name="imageUrl" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="imageBinary" Type="varbinary(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="Post">
     <Key>
@@ -32,7 +32,7 @@
     <Property Name="password" Type="nvarchar(max)" Nullable="false" />
     <Property Name="postId" Type="int" />
   </EntityType>
-  <Association Name="FK__Image__postId__70DDC3D8">
+  <Association Name="FK__Image__postId__02FC7413">
     <End Role="Post" Type="Self.Post" Multiplicity="0..1" />
     <End Role="Image" Type="Self.Image" Multiplicity="*" />
     <ReferentialConstraint>
@@ -72,7 +72,7 @@
     <EntitySet Name="Image" EntityType="Self.Image" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Post" EntityType="Self.Post" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-    <AssociationSet Name="FK__Image__postId__70DDC3D8" Association="Self.FK__Image__postId__70DDC3D8">
+    <AssociationSet Name="FK__Image__postId__02FC7413" Association="Self.FK__Image__postId__02FC7413">
       <End Role="Post" EntitySet="Post" />
       <End Role="Image" EntitySet="Image" />
     </AssociationSet>
