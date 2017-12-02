@@ -8,35 +8,32 @@ using System.IO;
 
 namespace MiniMartTest.Controllers
 {
-
-  
     public class HomeController : Controller
     {
         List<Models.Post> postList = new List<Models.Post>();
         List<Models.Image> imageList = new List<Models.Image>();
-
+        private MiniMartDBContentEntities db = new MiniMartDBContentEntities();
 
         public ActionResult Index()
         {
-            using (var db = new MiniMartDBContentEntities())
+           
+            //all posts
+            var posts = db.Posts;
+
+            foreach (Post post in posts)
             {
-
-                //all posts
-                var posts = db.Posts;
-
-                foreach (Post post in posts)
-                {
-                    postList.Add(post);
-                }
-
-                //all images
-                var images = db.Images;
-
-                foreach (Image image in images)
-                {
-                    imageList.Add(image);
-                }
+                postList.Add(post);
             }
+
+            //all images
+            var images = db.Images;
+
+            foreach (Image image in images)
+            {
+                imageList.Add(image);
+            }
+            
+
             Session["postList"] = postList;
             Session["imageList"] = imageList;
 
@@ -64,9 +61,11 @@ namespace MiniMartTest.Controllers
             return View();
         }
 
-        public ActionResult Saved()
+        public ActionResult SavePost(int postId)
         {
             ViewBag.Message = "Your Saved Items page.";
+           
+             //TODO: store the postId in a user-based list
 
             return View();
         }
@@ -75,15 +74,31 @@ namespace MiniMartTest.Controllers
         public ActionResult GetData(int pageIndex, int pageSize)
         {
             System.Threading.Thread.Sleep(1000); // for test
-            var db = new MiniMartDBContentEntities();
-            var query = (from post in db.Posts
-                         orderby post.postId ascending
-                         select post)
-                     .Skip(pageIndex * pageSize)
-                     .Take(pageSize);
+            var query = db.Posts.ToList<Post>();
+            List<JsonModel> jsonModels = new List<JsonModel>();
+            foreach(Post p in query)
+            {
+                var m = new JsonModel();
+                m.postName = p.name;
+                m.postId = p.postId;
+
+                foreach(Image i in db.Images.ToList())
+                {
+                    if (i.postId == p.postId)
+                    {
+                        var base64 = Convert.ToBase64String(i.imageBinary);
+                        var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
+                        m.imageSrc = imageSrc;
+                        break;
+                    }
+                }
+
+                jsonModels.Add(m);
+            }
+            
             try
             {
-                return Json(query.ToList<Post>(), JsonRequestBehavior.AllowGet);
+                return Json(jsonModels, JsonRequestBehavior.AllowGet);
             }
 
             catch
@@ -92,20 +107,28 @@ namespace MiniMartTest.Controllers
             }
         }
         
-
+        //collection detail info of selected post and pass data to the view
         public ActionResult ZoomUpPost(int postId)
         {
+            //define the post by postId from item click at the main page
             Post post;
-            using (var db = new MiniMartDBContentEntities())
-            {
-                post = db.Posts.First(m=>m.postId == postId);
-
-            }
             
+            post = db.Posts.First(m=>m.postId == postId);
+
+            
+            
+            //setup data for popup view displaying more detail
             Session["SelectedPost"] = post;
 
             return RedirectToAction("Index");
         }
 
     }
+}
+
+public class JsonModel {
+        public string postName { get; set; }
+        public int postId { get; set; } 
+        
+        public string imageSrc { get; set; }
 }

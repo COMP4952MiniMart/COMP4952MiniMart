@@ -1,0 +1,92 @@
+﻿@model MiniMartTest.Models.Post
+@{
+    ViewBag.Title = "PostDetail";
+
+    //re-define data to be used
+    Post post = Session["SelectedPost"] as Post;
+    List<Image> imageList = Session["imageList"] as List<Image>;
+}
+
+<h1 id="main-title">@ViewBag.Title</h1>
+<hr />
+
+@*Item Detials Page*@
+
+@*Profile navigation*@
+<div class="row">
+    <div class="col-md-2">
+        <table>
+            <tr>
+                <td>
+                    <img id="avatar-logo" src="@Url.Content("~/Content/Images/avatar.png")" />
+                    <h2>@post.name</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>@Html.ActionLink("Home", "Index", "Home")</p>
+                    <p>@Html.ActionLink("About", "About", "Home")</p>
+                    <p>@Html.ActionLink("Contact", "Contact", "Home")</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    @*Item detail container*@
+    <div id="saved-content" class="col-md-10">
+        <h2>Item Name</h2>
+
+        <div>
+            <span id="saved-post">Posted by: User</span>
+            <span>Posted: Date</span>
+        </div>
+
+        <div class="form-group">
+            <h2>Item Description:</h2>
+            <p>@post.description</p>
+        </div>
+
+        <div class="form-group saved-images">
+            <table>
+                <tr>
+                    @foreach (Image i in imageList)
+                    {
+                        if (i.postId == post.postId)
+                        {
+                        var base64 = Convert.ToBase64String(i.imageBinary);
+                        var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                        <a href=""><p class="imageBox"><img src="@imageSrc" style="max-width:120px; max-width:120px" /></p></a>
+                        }
+                    }
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    @*Comment Section*@
+    <h3>Comments:</h3>
+    <hr />
+    <div class="row">
+        <img class="col-md-6 comment-avatar" src="@Url.Content("~/Content/Images/avatar.png")" />
+        <div class="col-md-6 comment-box">
+            <p>Comment goes here</p>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <img class="col-md-6 comment-avatar" src="@Url.Content("~/Content/Images/avatar.png")" />
+        <div class="col-md-6 comment-box">
+            <p>Comment goes here</p>
+        </div>
+    </div>
+</div>
+
+<div class="row" id="comment-section">
+    <img class="col-md-5" id="comment-useravatar" src="@Url.Content("~/Content/Images/avatar.png")" />
+    <div class="col-md-7 comment-box">
+        <p>Type comment here.</p>
+    </div>
+    <button id="comment-submit" class="btn btn-default">Comment</button>
+</div>
+
