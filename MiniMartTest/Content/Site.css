@@ -1,4 +1,8 @@
-﻿body {
+﻿
+
+
+
+body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
@@ -24,6 +28,15 @@ textarea {
 }
 
 /* Main Content Page */
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+#modal-avatar-logo {
+    width: 15%;
+}
+
 .imageBox {
     border: 2px black solid;
     border-radius: 5px;
@@ -47,7 +60,10 @@ textarea {
 
 .info-content {
     text-align: center !important;
+}
 
+#info-panel {
+    
 }
 
 .content-padding {
@@ -64,6 +80,14 @@ textarea {
 
 .button-group {
     min-width: 102%;
+}
+
+#posts {
+    display: block; 
+}
+
+#posts td {
+    display: inline-block; 
 }
 
 /* Post Page */
