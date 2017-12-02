@@ -1,8 +1,86 @@
-﻿@{
+﻿@model IEnumerable<MiniMartTest.Models.Image>
+@{
     ViewBag.Title = "Mini Mart";
+
+    List<Post> postList = Session["postList"] as List<Post>;
+    List<Image> imageList = Session["imageList"] as List<Image>;
+    Post selectedPost = new Post();
+    if(Session["SelectedPost"] != null)
+    {
+        selectedPost = Session["SelectedPost"] as Post;
+    }
+
 }
 
 @*Main content View*@
+
+
+<head>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script type="text/javascript">
+
+    // NOTE: check HomeController for other function involved in infinite scrolling
+
+    var pageSize = 15; // number of items per fetch
+    var pageIndex = 0; // must be in sync with database id!
+
+    var working = false; // simple lock to prevent async access
+
+    $(document).ready(function ()
+    {
+        //GetData(); // initial retrieve
+
+        //window.onscroll = function (e)
+        //{
+        //    if (!working && (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 2) // condition for scrolling
+        //        GetData(); // run when scrollbar is near end
+        //}
+       
+       
+            myFunction();
+       
+          
+        
+      
+    });
+
+    // remove later
+    function SamplePopulate()
+    {
+        for(var i = 0; i < 15; i++)
+            $("#posts-content").append("<td>" + data[i].name + "</td>");
+    }
+
+    // function to fetch data
+    function GetData() {
+        $.ajax({
+            type: 'GET',
+            url: '/home/GetData',
+            data:{"pageindex":pageIndex,"pagesize":pageSize},
+            dataType: 'json',
+            success: function (data) { // success action
+                if (data) {
+                    for (var i = 0; i < data.length; i++)
+                        $("#posts-content").append("<td>"+ data[i].name +"</td>");
+
+                    ++pageIndex;
+                }
+            },
+            beforeSend : function () {
+                working = true;
+            },
+            complete : function () {
+                working = false;
+            },
+            error: function () {
+                // log error
+                working = false;
+            }
+        });
+    }
+    </script>
+</head>
+
 
 <div class="row">
     <h1 id="main-title">@ViewBag.Title</h1>
@@ -25,72 +103,100 @@
                     <p>@Html.ActionLink("Home", "Index", "Home")</p>
                     <p>@Html.ActionLink("About", "About", "Home")</p>
                     <p>@Html.ActionLink("Contact", "Contact", "Home")</p>
+                    <p><a class="cursor-pointer" data-toggle="modal" data-target="#savedModal">Saved Posts</a></p>
+                    <p><a class="cursor-pointer" data-toggle="modal" data-target="#profileModal">Edit Profile</a></p>
                 </td>
             </tr>
         </table>
     </div>
 
     @*Postings*@
-    <div class="col-md-7 main-content">
-        <table>
-            <tr>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-            </tr>
+    <div id="posting" class="container-fluid main-content">
+        <table id="posts">
+            <tr id="posts-content">
+                @foreach (Post p in postList)
+                {
+                   <td onclick="location.href='@Url.Action("ZoomUpPost", "Home", new {postId = p.postId })';" class="imagebox">
+                        @*\<% Html.RenderAction("ZoomUpPost", new { post = @p }); %>*@
+                        @foreach (Image i in imageList)
+                        {
+                            if (i.postId == p.postId)
+                            {
+                                var base64 = Convert.ToBase64String(i.imageBinary);
+                                var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
 
-            <tr>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-            </tr>
-
-            <tr>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
-                <td>
-                    <a href=""><p class="imageBox">image goes here</p></a>
-                </td>
+                                <img src="@imageSrc" style="max-width:120px; max-width:120px" />
+                                break;
+                            }
+                        }
+                        <p> @p.name </p>
+                    </td>
+                }
             </tr>
         </table>
     </div>
 
     @*Item description panel*@
-    <div class="col-md-3 info-content">
-        <h3>Item name</h3>
-        <p class="imageInfoBox">image goes here</p>
-        <p class="content-padding">Item description here</p>
-        <p class="content-padding">Condition: New / Used</p>
+    <div id="info-panel" style="display:none" class="col-md-3 info-content">
+       <h3>@selectedPost.name</h3>
 
-        <div class="button-group">
-            <button class="btn btn-default">Save Item</button>
-            <input type="button" value="View Item Page" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Saved", "Home") + "'");" />
-        </div>     
+        @foreach (Image i in imageList)
+        {
+            if (i.postId == selectedPost.postId)
+            {
+                var base64 = Convert.ToBase64String(i.imageBinary);
+                var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
+
+                <p class="imageInfoBox"><img src="@imageSrc" style="max-width:120px; max-width:120px" /></p>
+                break;
+            }
+        }   
+    </div>
+
+    <!--Saved Post Modal -->
+    <div id="savedModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Saved Posts</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Saved Posting</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Profile Edit Modal -->
+    <div id="profileModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Your Profile</h4>
+                </div>
+                <div class="modal-body">
+                    <img id="modal-avatar-logo" src="@Url.Content("~/Content/Images/avatar.png")" />
+                    <h2>Name</h2>
+                    <p>Email Address: </p>
+                    <p>Phone Number: </p>
+                    <p><a>Change Profile Picture</a></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     @*@{
@@ -107,3 +213,50 @@
     }*@
 </div>
 
+@section JavaScript {
+    <script>
+        function myFunction() {
+
+            var x = document.getElementById("info-panel");
+            var post = document.getElementById("posting");
+
+            if (x.style.display === "none") {
+                x.style.display = "block";
+                x.style.transition = "all 2s";
+                post.classNmyame = post.className + " col-md-7";
+            } else {
+                post.className = post.className.replace(/\bcol-md-7\b/, '');
+                x.style.display = "none";
+            }
+
+
+            //var url = "/Home/ZoomUpPost";
+            //var post = p;
+            //$.get(url, {post: post}, function (data) {
+            //    $("#info-pane").html(data.postId)
+            //})
+
+        }
+    </script>
+}
+@*<h3>@selectedPost.name</h3>
+
+@foreach (Image i in imageList)
+{
+    if (i.postId == selectedPost.postId)
+    {
+        var base64 = Convert.ToBase64String(i.imageBinary);
+        var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
+
+        <p class="imageInfoBox"><img src="@imageSrc" style="max-width:120px; max-width:120px" /></p>
+        break;
+    }
+}*@
+
+<p class="content-padding">@selectedPost.description</p>
+<p class="content-padding">Condition: @selectedPost.condition</p>
+
+<div class="button-group">
+    <button class="btn btn-default">Save Item</button>
+    <input type="button" value="View Item Page" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Saved", "Home") + "'");" />
+</div>     
