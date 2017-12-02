@@ -4,13 +4,15 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MiniMartTest.Models;
+using System.Threading.Tasks;
 
 namespace MiniMartTest.Controllers
 {
     public class PostController : Controller
     {
         // store images before a post is stored in DB
-        private List<Image> postImages = new List<Image>();
+        public List<Image> postImages = new List<Image>();
+        private MiniMartDBContentEntities db = new MiniMartDBContentEntities();
 
         // GET: Post
         public ActionResult Index()
@@ -29,48 +31,40 @@ namespace MiniMartTest.Controllers
         [HttpPost]
         public ActionResult Post(PostViewModel model)
         {
-          
-            using (var db = new MiniMartDBContentEntities())
-            {
-                int postId = db.Posts.Count();
-                Post post = new Post();
-                post.name = model.ItemName;
-                post.userId = 0;
-                post.User = db.Users.First(m => m.Id == 0);
-                post.Users.Add(post.User);
-                if (model.SelectedConditionId == 0)
-                {
-                    post.condition = "new";
-                }
-                else
-                {
-                    post.condition = "used";
-                }
-                post.description = model.ItemDiscription;
-                post.postId = postId;
+            int postId = db.Posts.Count();
+            Post post = new Post();
+            post.name = model.ItemName;
+            post.userId = 0;
+            post.User = db.Users.First(m => m.Id == 0);
+            post.Users.Add(post.User);
 
-                //add a new post 
-                db.Posts.Add(post);
-                db.SaveChanges();
+            if (model.SelectedConditionId == 0)
+                post.condition = "new";
+            else
+                post.condition = "used";
 
-                var images = Session["postImages"] as List<Image>;
+            post.description = model.ItemDiscription;
+            post.postId = postId;
+
+            //add a new post 
+            db.Posts.Add(post);
+            db.SaveChanges();
+
+            var images = Session["postImages"] as List<Image>;
              
-                //add a new image
-                foreach(Image i in images)
-                {
-                    i.Id = db.Images.Count();
-                    i.postId = postId;
-                    db.Images.Add(i);
-                    db.SaveChanges();
-                }
+            //add a new image
+            foreach(Image i in images)
+            {
+                i.Id = db.Images.Count();
+                i.postId = postId;
+                db.Images.Add(i);
+                db.SaveChanges();
             }
-
-
-
+            
             return RedirectToAction("Index", "Home");
         }
 
-        public ActionResult UploadFile()
+        public async Task<Action> UploadFile()
         {
             bool isSavedSuccessfully = true;
             string fname = "";
@@ -100,16 +94,18 @@ namespace MiniMartTest.Controllers
             {
                 isSavedSuccessfully = false;
             }
-            
-               
-            if(isSavedSuccessfully)
-            {
-                return Json(new { Message = fname });
-            }
-            else
-            {
-                return Json(new { Message = "error" });
-            }
+
+            /* 
+          if(isSavedSuccessfully)
+          {
+              return Json(new { Message = fname });
+          }
+          else
+          {
+              return Json(new { Message = "error" });
+          }
+          */
+            return null;
         }
 
     }

@@ -5,7 +5,9 @@
     List<Post> postList = Session["postList"] as List<Post>;
     List<Image> imageList = Session["imageList"] as List<Image>;
     Post selectedPost = new Post();
-    if(Session["SelectedPost"] != null)
+    selectedPost.postId = -1;
+    int dataPostId = -1;
+    if (Session["SelectedPost"] != null)
     {
         selectedPost = Session["SelectedPost"] as Post;
     }
@@ -18,66 +20,69 @@
 <head>
     <script src="~/Scripts/jquery-1.10.2.js"></script>
     <script type="text/javascript">
+        // NOTE: check HomeController for other function involved in infinite scrolling
 
-    // NOTE: check HomeController for other function involved in infinite scrolling
+        var pageSize = 15; // number of items per fetch
+        var pageIndex = 0; // must be in sync with database id!
 
-    var pageSize = 15; // number of items per fetch
-    var pageIndex = 0; // must be in sync with database id!
+        var working = false; // simple lock to prevent async access
 
-    var working = false; // simple lock to prevent async access
-
-    $(document).ready(function ()
-    {
-        //GetData(); // initial retrieve
-
-        //window.onscroll = function (e)
-        //{
-        //    if (!working && (window.innerHeight + window.pageYOffset) >= document.body.offsetHeight - 2) // condition for scrolling
-        //        GetData(); // run when scrollbar is near end
-        //}
-       
-       
+        $(document).ready(function ()
+        {
             myFunction();
-       
-          
-        
-      
-    });
 
-    // remove later
-    function SamplePopulate()
-    {
-        for(var i = 0; i < 15; i++)
-            $("#posts-content").append("<td>" + data[i].name + "</td>");
-    }
+            GetData(); // initial retrieve
 
-    // function to fetch data
-    function GetData() {
-        $.ajax({
-            type: 'GET',
-            url: '/home/GetData',
-            data:{"pageindex":pageIndex,"pagesize":pageSize},
-            dataType: 'json',
-            success: function (data) { // success action
-                if (data) {
-                    for (var i = 0; i < data.length; i++)
-                        $("#posts-content").append("<td>"+ data[i].name +"</td>");
-
-                    ++pageIndex;
-                }
-            },
-            beforeSend : function () {
-                working = true;
-            },
-            complete : function () {
-                working = false;
-            },
-            error: function () {
-                // log error
-                working = false;
+            window.onscroll = function (e)
+            {
+                if (!working && (window.innerheight + window.pageyoffset) >= document.body.offsetheight - 2) // condition for scrolling
+                    getdata(); // run when scrollbar is near end
             }
         });
-    }
+
+        // remove later
+        function SamplePopulate()
+        {
+            for(var i = 0; i < 15; i++)
+                $("#posts-content").append("<td><h3>hey hey" +
+                                                            "</h3>"
+
+                                                    + "</td>");
+        }
+
+        // function to fetch data
+        function GetData() {
+            $.ajax({
+                type: 'GET',
+                url: '/Home/GetData',
+                data:{"pageindex":pageIndex,"pagesize":pageSize},
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (data) { // success action
+                    if (data) {
+                        for (var i = 0; i < data.length; i++)
+                            $("#posts-content").append('<td><h3>' +
+                                                                     '<img src="' + data[i].imageSrc +'" style="max-width:120px; max-width:120px" />'
+                                                                 + '<br />' +  data[i].postName 
+                                                                 + ' </h3></td>' );
+                            ++pageIndex;
+                    
+                            
+                    }
+
+                },
+                beforeSend : function () {
+                    working = true;
+                },
+                complete : function () {
+                    working = false;
+                },
+                error: function () {
+                    // log error
+                    working = false;
+                }
+            });
+        }
     </script>
 </head>
 
@@ -114,43 +119,36 @@
     <div id="posting" class="container-fluid main-content">
         <table id="posts">
             <tr id="posts-content">
-                @foreach (Post p in postList)
-                {
-                   <td onclick="location.href='@Url.Action("ZoomUpPost", "Home", new {postId = p.postId })';" class="imagebox">
-                        @*\<% Html.RenderAction("ZoomUpPost", new { post = @p }); %>*@
-                        @foreach (Image i in imageList)
-                        {
-                            if (i.postId == p.postId)
-                            {
-                                var base64 = Convert.ToBase64String(i.imageBinary);
-                                var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
-
-                                <img src="@imageSrc" style="max-width:120px; max-width:120px" />
-                                break;
-                            }
-                        }
-                        <p> @p.name </p>
-                    </td>
-                }
+               
             </tr>
         </table>
     </div>
 
     @*Item description panel*@
     <div id="info-panel" style="display:none" class="col-md-3 info-content">
-       <h3>@selectedPost.name</h3>
+       @if(selectedPost.postId != -1) {
+            <h3>@selectedPost.name</h3>
 
-        @foreach (Image i in imageList)
-        {
-            if (i.postId == selectedPost.postId)
+            foreach (Image i in imageList)
             {
-                var base64 = Convert.ToBase64String(i.imageBinary);
-                var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
+                if (i.postId == selectedPost.postId)
+                {
+                    var base64 = Convert.ToBase64String(i.imageBinary);
+                    var imageSrc = string.Format("data:image/gif;base64,{0}", base64);
 
-                <p class="imageInfoBox"><img src="@imageSrc" style="max-width:120px; max-width:120px" /></p>
-                break;
-            }
-        }   
+                    <p class="imageInfoBox"><img src="@imageSrc" style="max-width:120px; max-width:120px" /></p>
+                   break;
+               }
+           }
+
+            <p class="content-padding">@selectedPost.description</p>
+            <p class="content-padding">Condition: @selectedPost.condition</p>
+
+            <div class="button-group">
+                <button class="btn btn-default" onclick="location.href='@Url.Action("SavePost", "Home", new {postId = selectedPost.postId })';">Save Item</button>
+                <input type="button" value="View Item Page" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Index", "PostDetail", new {postId = selectedPost.postId}) + "'");" />
+            </div>
+       }   
     </div>
 
     <!--Saved Post Modal -->
@@ -252,11 +250,3 @@
         break;
     }
 }*@
-
-<p class="content-padding">@selectedPost.description</p>
-<p class="content-padding">Condition: @selectedPost.condition</p>
-
-<div class="button-group">
-    <button class="btn btn-default">Save Item</button>
-    <input type="button" value="View Item Page" class="btn btn-default" onclick="@("window.location.href='" + @Url.Action("Saved", "Home") + "'");" />
-</div>     
